@@ -40,12 +40,11 @@ public class interfaz  {
     
   
     public interfaz(){
-    
-    valores= new Stack<>();
-    operaciones = new Stack<>();   
+      
     
     frame = new JFrame("Calculadora");
-    texto =new JTextField();    
+    texto =new JTextField();  
+    String tfTexto= texto.getText();
     
     
     GridBagLayout grid= new GridBagLayout();
@@ -123,40 +122,60 @@ public class interfaz  {
                   texto.setText("");
               }else{
                texto.setText(texto.getText()+buttonText);
-               
-               if(operaciones.empty()){
-                   valorActual=valorActual + buttonText;
-                   System.out.println(valorActual);
-               }else{
-                   int valorNum = Integer.parseInt(valorActual);
-                   valores.push(valorNum);
-                   System.out.println(valores.peek());
-               }
-               
+                            
               }
                            
           }
       }); 
     }
     
-    //setear lo que me falto (otros)
-    gbc.gridx=x;
-    gbc.gridy=y;
-    boton = new JButton(""+otros [0]);
-    boton.setBackground(new Color (128,131,237));
-    frame.add(boton,gbc);    
-    x++;
-    gbc.gridx=x;
-    gbc.gridy=y;
-    boton = new JButton(""+otros [1]);
-    boton.setBackground(new Color (128,131,237));
-    frame.add(boton,gbc); 
+    for(int i=0;i<otros.length;i++){
+        gbc.gridx=x;
+        gbc.gridy=y;
+        boton = new JButton(""+otros [i]);
+        boton.setBackground(new Color (90,131,237));
+        frame.add(boton,gbc);  
+        x++;
+        boton.addActionListener(new ActionListener(){
+       @Override
+       public void actionPerformed(ActionEvent e){
+           JButton o = (JButton)e.getSource();
+           buttonText = o.getText();
+           
+           switch(buttonText){
+               
+               case "=":
+                     valores= new Stack<>();
+                     operaciones = new Stack<>(); 
+            
+                     if(checkString(texto.getText(),operadores)){
+                   
+                     for(int i=0;i<texto.getText().length();i++){
+                    
+                       }
+                     }  
+               break;
+               
+               case ".":
+                   if(checkString(texto.getText(),operadores)){
+                       texto.setText(texto.getText()+buttonText);
+                   }
+                   
+               break;
+           }
+           
+           if(buttonText.equals("=")){
+            
+           }
+           else{
+               
+           }
+           
+       }
+    });
+    }
     
-    gbc.gridx=3;
-    gbc.gridy=5;
-    boton = new JButton(""+otros[2]);
-    frame.add(boton,gbc);
-    
+
     //setear operadores
     x=3;
     y=1;
@@ -179,8 +198,6 @@ public class interfaz  {
                if( checkString(texto.getText(),operadores)){
       
                    texto.setText(texto.getText()+buttonText);
-                   operaciones.push(buttonText.charAt(0));
-                   System.out.println(operaciones.peek());
                   }               
            }
        });
@@ -220,7 +237,7 @@ public class interfaz  {
             
             for(int i=0;i<items.length;i++){
                 
-            if (lastChar == items[i]){
+            if (lastChar == items[i] || lastChar == '.'){
                 
                 return false;
                 
