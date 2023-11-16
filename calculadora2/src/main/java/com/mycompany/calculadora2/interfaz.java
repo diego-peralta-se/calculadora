@@ -34,8 +34,6 @@ public class interfaz  {
     
     //Atributos para verificar el textfield y operar el string
     String valorActual ="";
-    Stack<Integer> valores;
-    Stack<Character> operaciones;
     String resultado;
     
   
@@ -44,8 +42,8 @@ public class interfaz  {
     
     frame = new JFrame("Calculadora");
     texto =new JTextField();  
-    String tfTexto= texto.getText();
-    
+    Stack<Integer> numerosStack = new Stack<>();
+    Stack<String> operadoresStack = new Stack<>();
     
     GridBagLayout grid= new GridBagLayout();
     GridBagConstraints gbc = new GridBagConstraints();
@@ -119,10 +117,14 @@ public class interfaz  {
               buttonText = o.getText();
               // primero hay que verificar si el primer numero es 0 o no, no existen numeros que empiecen con 0
               if(texto.getText().isEmpty() && buttonText.equals("0")){
+                  
                   texto.setText("");
+                  
               }else{
-               texto.setText(texto.getText()+buttonText);
-                            
+                  
+                texto.setText(texto.getText()+buttonText);
+                
+                
               }
                            
           }
@@ -144,15 +146,37 @@ public class interfaz  {
            
            switch(buttonText){
                
-               case "=":
-                     valores= new Stack<>();
-                     operaciones = new Stack<>(); 
+               case "=": 
             
                      if(checkString(texto.getText(),operadores)){
+                        String operacion = texto.getText();
+                        
+                        
+                        for(int i=0; i<operacion.length();i++){
+                            
+                            if(operacion.charAt(i) == '+' || operacion.charAt(i) == '-'
+                                    ||operacion.charAt(i) == 'x' || operacion.charAt(i) == '/'){
+                                System.out.println("holaaa");
+                            }
+                            else{
+                                System.out.println("oh no");
+                            }
+                            
+                            /*
+                            valorActual +=buttonText;
+                            int valor = Integer.parseInt(valorActual);
+                            numerosStack.push(valor);
                    
-                     for(int i=0;i<texto.getText().length();i++){
-                    
-                       }
+                   
+                            operadoresStack.push(buttonText);
+                   
+                            System.out.println(operadoresStack.peek());
+                            System.out.println(numerosStack.peek());
+                   
+                            valorActual="";
+                            */
+                        }
+                      
                      }  
                break;
                
@@ -164,12 +188,6 @@ public class interfaz  {
                break;
            }
            
-           if(buttonText.equals("=")){
-            
-           }
-           else{
-               
-           }
            
        }
     });
@@ -198,7 +216,8 @@ public class interfaz  {
                if( checkString(texto.getText(),operadores)){
       
                    texto.setText(texto.getText()+buttonText);
-                  }               
+                  
+                }               
            }
        });
     }
