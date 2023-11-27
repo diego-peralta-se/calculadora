@@ -8,8 +8,6 @@ import javax.swing.*;
 import java.awt.GridBagConstraints;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
-import java.util.Arrays;
 import java.util.Stack;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -23,7 +21,7 @@ public class interfaz  {
     //Texto para los botones
     String[] numeros = {"7","8","9","4","5","6","1","2","3","0"};
     String[] otros = {".","+/-","="};
-    char[] operadores = {'/','x','-','+'};
+    char[] operadores = {'/','*','-','+'};
     String[] especiales = {"C","<-","%"};
     
     //atributos para la interfaz
@@ -32,9 +30,7 @@ public class interfaz  {
     JButton boton;
     String buttonText;
     
-    //Atributos para verificar el textfield y operar el string
-    String valorActual ="";
-    String resultado;
+
     
   
     public interfaz(){
@@ -151,31 +147,11 @@ public class interfaz  {
                      if(checkString(texto.getText(),operadores)){
                         String operacion = texto.getText();
                         
+                        operacion = infixToPostfix(operacion);
                         
-                        for(int i=0; i<operacion.length();i++){
-                            
-                            if(operacion.charAt(i) == '+' || operacion.charAt(i) == '-'
-                                    ||operacion.charAt(i) == 'x' || operacion.charAt(i) == '/'){
-                                System.out.println("holaaa");
-                            }
-                            else{
-                                System.out.println("oh no");
-                            }
-                            
-                            /*
-                            valorActual +=buttonText;
-                            int valor = Integer.parseInt(valorActual);
-                            numerosStack.push(valor);
-                   
-                   
-                            operadoresStack.push(buttonText);
-                   
-                            System.out.println(operadoresStack.peek());
-                            System.out.println(numerosStack.peek());
-                   
-                            valorActual="";
-                            */
-                        }
+                        operacion = postFixCalculator(operacion);
+                        
+                        texto.setText(operacion);
                       
                      }  
                break;
@@ -242,7 +218,7 @@ public class interfaz  {
      
     }
 
-    public boolean checkString(String s,char[] items){
+    private boolean checkString(String s,char[] items){
         
         
         
@@ -269,5 +245,134 @@ public class interfaz  {
         return true;
     }
     
-   
+    private String infixToPostfix(String infix){
+        Stack<Character> operators = new Stack<>();
+        char symbol;
+        String postfix = "";
+        
+        for(int i=0; i<infix.length();i++){
+            symbol = infix.charAt(i);
+            
+            if(Character.isDigit(symbol)){
+                postfix = postfix + symbol;
+                
+            }
+            
+            else if(symbol=='('){
+                operators.push(symbol);
+            }
+            
+            else if(symbol==')'){
+                
+                while(operators.peek()!='('){
+                    postfix = postfix + operators.pop();
+                }
+                operators.pop();
+            }
+            
+            else {
+                postfix= postfix + ',';
+                while(!operators.empty() && !(operators.peek()=='(') && prec(symbol) <= prec(operators.peek())){
+                    postfix = postfix + operators.pop();
+                    postfix= postfix + ',';
+
+                }
+                    
+                    operators.push(symbol);
+                
+            }
+            
+        }
+        while (!operators.empty()){
+            postfix= postfix + ',';
+                 postfix = postfix + operators.pop();
+                 
+            }
+        return postfix;
+    }
+    
+    private int prec (char x){
+        if(x=='+' || x== '-'){
+            return 1;
+        }
+        if(x=='*'||x=='/'||x=='%'){
+            return 2;
+        }
+        
+        return 0;
+    }
+    
+    private String postFixCalculator(String postfix){
+        
+        Stack <Integer> valores = new Stack<>();
+        Stack <Character> operadoresStack= new Stack<>();
+        
+        String valorActual="";
+            char ultimoSigno = ' ';
+        for(int i=0;i<postfix.length();i++){
+            
+            
+            char lastChar = postfix.charAt(i);
+            
+            if (Character.isDigit(lastChar)){    
+                valorActual = valorActual + lastChar;
+            }
+            else if(!Character.isDigit(lastChar) && lastChar != ','){
+                ultimoSigno = lastChar;
+            }
+            
+            else if(lastChar==','){
+                if(!valorActual.isEmpty()){
+                    valores.push(Integer.valueOf(valorActual));
+                    valorActual = "";
+                }
+                
+                if(ultimoSigno != ' '){
+                    operadoresStack.push(ultimoSigno);
+                    ultimoSigno = ' ';
+                }
+            }
+            
+            if (i == postfix.length()-1){
+                 operadoresStack.push(ultimoSigno);
+                 ultimoSigno = ' ';
+            }
+            
+            if(!operadoresStack.empty()){
+                int valor2 = valores.pop();
+                int valor1 = valores.pop();
+                
+                int resultado = checkSigno(valor1,valor2,operadoresStack.pop());
+                               
+                valores.push(resultado);
+            }
+        }
+        
+        return valores.peek().toString();
+    }
+
+    
+    private static int checkSigno(int valor1, int valor2, char signo ){
+        int resultado=0;
+        
+        switch(signo){
+            case '+': 
+                resultado = valor1+valor2;
+                break;
+                
+            case '-': 
+                resultado = valor1-valor2;
+                break;
+            
+            case '*': 
+                resultado = valor1*valor2;
+                break;
+                
+            case '/': 
+                resultado = valor1/valor2;
+                break;
+        }
+        
+        return resultado;
+    }
 }
